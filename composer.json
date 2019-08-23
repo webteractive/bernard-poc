@@ -1,0 +1,6 @@
+{
+    "require": {
+        "bernard/bernard": "^0.13.0",
+        "predis/predis": "^1.1"
+    }
+}
