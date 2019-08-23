@@ -1,25 +1,18 @@
 <?php
 
-use Bernard\Consumer;
 use Bernard\Message;
-use Bernard\Middleware;
+use Bernard\Consumer;
 use Bernard\Producer;
-use Bernard\QueueFactory\PersistentFactory;
+use Bernard\Middleware;
 use Bernard\Router\SimpleRouter;
 use Bernard\Serializer\SimpleSerializer;
-
-/**
- * This file contains helper methods for the examples. See example/$driver.php
- * for how to initiate the driver. Also the helper methods can be used as
- * guidance if you are using Bernard outside a framework or you are developing
- * a plugin to a framework.
- */
+use Bernard\QueueFactory\PersistentFactory;
 
 if (file_exists($autoloadFile = __DIR__ . '/../vendor/autoload.php') || file_exists($autoloadFile = __DIR__ . '/../../../autoload.php')) {
     require $autoloadFile;
 }
 
-require __DIR__ . '/EchoTimeService.php';
+require __DIR__ . '/JobMaster.php';
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -50,7 +43,7 @@ function get_producer() {
 
 function get_receivers() {
     return new SimpleRouter(array(
-        'EchoTime' => new EchoTimeService,
+        'Job' => new JobMaster,
     ));
 }
 
@@ -61,7 +54,7 @@ function get_consumer() {
 function produce() {
     $producer = get_producer();
 
-    $producer->produce(new Message\DefaultMessage('EchoTime', array(
+    $producer->produce(new Message\DefaultMessage('Job', array(
         'time' => time(),
     )));
 }
@@ -70,22 +63,5 @@ function consume() {
     $queues   = get_queue_factory();
     $consumer = get_consumer();
 
-    $consumer->consume($queues->create('echo-time'));
+    $consumer->consume($queues->create('handle'));
 }
-
-function main() {
-    if (!isset($_SERVER['argv'][1])) {
-        die('You must provide an argument of either "consume" or "produce"');
-    }
-
-    if ($_SERVER['argv'][1] == 'produce') {
-        produce();
-    }
-
-    if ($_SERVER['argv'][1] == 'consume') {
-        consume();
-    }
-}
-
-// Run this diddy
-main();

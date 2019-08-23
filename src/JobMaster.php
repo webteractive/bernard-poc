@@ -2,9 +2,9 @@
 
 use Bernard\Message\DefaultMessage;
 
-class EchoTimeService
+class JobMaster
 {
-    public function echoTime(DefaultMessage $message)
+    public function trigger(DefaultMessage $message)
     {
         echo "Hello World {$message->time} \n";
     }
