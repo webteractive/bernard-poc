@@ -13,4 +13,4 @@ function get_driver() {
     )));
 }
 
-require 'bootstrap.php';
+require __DIR__ . '/bootstrap.php';

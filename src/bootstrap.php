@@ -12,7 +12,7 @@ if (file_exists($autoloadFile = __DIR__ . '/../vendor/autoload.php') || file_exi
     require $autoloadFile;
 }
 
-require __DIR__ . '/JobMaster.php';
+require __DIR__ . '/QueueJobService.php';
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -42,9 +42,9 @@ function get_producer() {
 }
 
 function get_receivers() {
-    return new SimpleRouter(array(
-        'Job' => new JobMaster,
-    ));
+    return new SimpleRouter([
+        'QueueJob' => new QueueJobService
+    ]);
 }
 
 function get_consumer() {
@@ -54,14 +54,14 @@ function get_consumer() {
 function produce() {
     $producer = get_producer();
 
-    $producer->produce(new Message\DefaultMessage('Job', array(
+    $producer->produce(new Message\DefaultMessage('QueueJob', [
         'time' => time(),
-    )));
+    ]));
 }
 
 function consume() {
     $queues   = get_queue_factory();
     $consumer = get_consumer();
 
-    $consumer->consume($queues->create('handle'));
+    $consumer->consume($queues->create('queue-job'));
 }
